@@ -166,6 +166,22 @@ def sendCarousel_all(event,column):  #轉盤樣板
             alt_text='所有房間訊息',
             template=CarouselTemplate(
                 columns=column
+            )
+        )
+        line_bot_api.reply_message(event.reply_token,message)
+    except:
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))
+
+def get_target_id(ws_all,room):
+    result_list = find_specific_room(room)
+    to = []
+    for i in range(len(result_list)):
+        to.append(result_list[i][8])
+    return to    
+if __name__=='__main__':
+    app.run(debug=True)
+
+
                 #     CarouselColumn(
                 #         title = result_list[0][1],
                 #         text = source_worksheet(result_list[0])+"\n"+result_list[0][2] + result_list[0][3] + ' (樓或房號)',
@@ -284,17 +300,3 @@ def sendCarousel_all(event,column):  #轉盤樣板
                 #         ]
                 #     ),
                 # ]
-            )
-        )
-        line_bot_api.reply_message(event.reply_token,message)
-    except:
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))
-
-def get_target_id(ws_all,room):
-    result_list = find_specific_room(room)
-    to = []
-    for i in range(len(result_list)):
-        to.append(result_list[i][8])
-    return to    
-if __name__=='__main__':
-    app.run(debug=True)

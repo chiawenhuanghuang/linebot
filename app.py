@@ -89,7 +89,7 @@ def handle_message(event):
     profile = line_bot_api.get_profile(user_id)
     #print("profile",profile,type(profile))
     mtext = event.message.text
-    if mtext=='@所有房間資訊':
+    if mtext=='@所有房間資訊!':
         try:
             result_list = find_all_room()
             column = []

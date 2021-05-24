@@ -86,7 +86,8 @@ def handle_message(event):
     mtext = event.message.text
     if mtext=='@所有房間資訊':
         try:
-            sendCarousel_all(event,result_list)
+            if event.source.user_id != "Udeadbeefdeadbeefdeadbeefdeadbeef":
+                sendCarousel_all(event,result_list)
         except:
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "不對喔孩子"))
 

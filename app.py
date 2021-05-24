@@ -130,8 +130,21 @@ def manageForm(event, mtext,user_id):
         print("next_row",next_row)
         ws.insert_rows(row =1, number = 1, values =flist)
         result_list = find_specific_room(flist[4])
-        reply_text = search(result_list)
-        print(reply_text)
+        #reply_text = search(result_list)
+        #print(reply_text)
+        list_len = len(result_list)
+        column = []
+        for i in range(list_len):
+            column.append(
+            CarouselColumn
+            (
+                title = result_list[i][1],
+                text = source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
+                #text = result_list[0][3],
+                actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
+            )
+            )
+        sendCarousel_all(event,column)
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply_text))
         
     except:

@@ -1,4 +1,5 @@
 from collections import UserDict
+import re
 from flask import Flask
 from flask import request
 from flask import request, abort, render_template
@@ -19,7 +20,13 @@ ws = sh.worksheet_by_title('換宿需求')
 ws_value = ws.get_all_values()
 ws_all = sh.worksheet_by_title('合併')
 ws_all_value = ws_all.get_all_values()
-#print(ws)
+#connect liff
+liffid = '1655976077-m6v9W1zp'
+
+def source_worksheet(result_list):
+    if result_list[9] == "linebot登記":
+        return "*linebot登記"
+    return "*住宿組登記"
 
 def next_available_row(worksheet):
     str_list = list(filter(None, worksheet.get_col(1)))
@@ -36,9 +43,7 @@ def find_specific_room(room):
     last_row = int(next_available_row(ws_all))
     result_list = []
     for i in range(last_row-1,60,-1):
-        print("all:",ws_all_value[i][2])
         available = ws_all_value[i][2]
-        print("available",available)
         if available == room:
             result_list += [ws_all_value[i]]
     return result_list
@@ -56,8 +61,6 @@ def search(result_list):
         reply += ' 聯絡資訊：' +  result[6] + '\n\n'
         i += 1
     return reply
-#connect liff
-liffid = '1655976077-m6v9W1zp'
 
 #LIFF靜態頁面
 @app.route('/page')
@@ -68,15 +71,8 @@ def page():
 def callback():
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text = True)
+    print(body)
     try:
-        # ori = next_available_row(ws_all)
-        # while(next_available_row(ws_all)!= ori):
-        #     print("in")
-        #     now = next_available_row(ws_all)-1
-        #     room = ws_all.get_value('E{}'.format(now))
-        #     to = get_target_id(ws_all,room)
-        #     line_bot_api.push_message(to, TextSendMessage(text='有新房間'))
-        #     ori = next_available_row(ws_all)
         handler.handle(body,signature)
     except InvalidSignatureError:
         abort(400)
@@ -85,36 +81,18 @@ def callback():
 #line_bot_api.push_message('U3ca1187f60702620e06f7e865ab6960e', TextSendMessage(text='hahahahahaha～'))
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    # get user id when reply
     user_id = event.source.user_id
-    #print("user_id =", user_id)
-    profile = line_bot_api.get_profile(user_id)
-    #print("profile",profile,type(profile))
+    result_list = find_all_room()
     mtext = event.message.text
     if mtext=='@所有房間資訊':
         try:
-            print("send_all")
-            result_list = find_all_room()
-            column = []
-            list_len = len(result_list)
-            for i in range(list_len):
-                column.append(
-                    CarouselColumn
-                    (
-                        title = result_list[i][1],
-                        text = source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
-                        #text = result_list[0][3],
-                        actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
-                    )
-                )
-            print("send_all")
-            sendCarousel_all(event,column)
+            sendCarousel_all(event,result_list)
         except:
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "不對喔孩子"))
 
     elif mtext[:3] == '###' and len(mtext) > 3:
-        manageForm(event, mtext,user_id)
-        #line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply))
+        result_list = manageForm(event, mtext,user_id)
+        sendCarousel_all(event,result_list)
 def manageForm(event, mtext,user_id):
     try:
         flist = mtext[3:].split('/')
@@ -134,40 +112,58 @@ def manageForm(event, mtext,user_id):
         print("next_row",next_row)
         ws.insert_rows(row =1, number = 1, values =flist)
         result_list = find_specific_room(flist[4])
+        return result_list
+        # list_len = len(result_list)
+        # column = []
+        # for i in range(list_len):
+        #     column.append(
+        #         CarouselColumn
+        #         (
+        #             title=result_list[i][1],
+        #             text = source_worksheet(result_list[i][3]+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)'),
+        #             #text = result_list[0][3],
+        #             actions=[
+        #                 MessageTemplateAction(
+        #                     label='聯絡資訊',
+        #                     text=result_list[i][6]
+        #                     )
 
-        #reply_text = search(result_list)
-        print(result_list)
-        list_len = len(result_list)
+        #                 ]
+                    
+        #         )
+        #     )
+        # print("done")
+        # sendCarousel_all(event,column)
+        # #line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply_text))
+        
+    except:
+        line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))
+
+def sendCarousel_all(event,result_list):  #轉盤樣板
+    try:
         column = []
+        list_len = len(result_list)
         for i in range(list_len):
             column.append(
                 CarouselColumn
                 (
-                    title = result_list[i][1],
+                    title=result_list[i][1],
                     text = source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
                     #text = result_list[0][3],
-                    actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
+                    actions=[
+                        MessageTemplateAction(
+                            label='聯絡資訊',
+                            text=result_list[i][6],)
+                        ]
                 )
             )
-        #print("column",column)
-        sendCarousel_all(event,column)
-        #line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply_text))
-        
-    except:
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))
-def source_worksheet(result_list):
-    if result_list[9] == "linebot登記":
-        return "*linebot登記"
-    return "*住宿組登記"
-
-def sendCarousel_all(event,column):  #轉盤樣板
-    try:
         message = TemplateSendMessage(
             alt_text='所有房間訊息',
             template=CarouselTemplate(
                 columns=column
             )
         )
+        print("haha")
         line_bot_api.reply_message(event.reply_token,message)
     except:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))
@@ -177,126 +173,7 @@ def get_target_id(ws_all,room):
     to = []
     for i in range(len(result_list)):
         to.append(result_list[i][8])
-    return to    
+    return to 
+
 if __name__=='__main__':
     app.run(debug=True)
-
-
-                #     CarouselColumn(
-                #         title = result_list[0][1],
-                #         text = source_worksheet(result_list[0])+"\n"+result_list[0][2] + result_list[0][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[0][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/qaAdBkR.png',
-                #         title=result_list[1][1],
-                #         text = source_worksheet(result_list[1])+"\n"+result_list[1][2] + result_list[1][3] + ' (樓或房號)',
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[1][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[2][1],
-                #         text = source_worksheet(result_list[2])+"\n"+result_list[2][2] + result_list[2][3] + ' (樓或房號)',
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[2][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[3][1],
-                #         text = source_worksheet(result_list[3])+"\n"+result_list[3][2] + result_list[3][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[3][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[4][1],
-                #         text = source_worksheet(result_list[4])+"\n"+result_list[4][2] + result_list[4][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[4][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[5][1],
-                #         text = source_worksheet(result_list[5])+"\n"+result_list[5][2] + result_list[5][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[5][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[6][1],
-                #         text = source_worksheet(result_list[6])+"\n"+result_list[6][2] + result_list[6][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[6][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[7][1],
-                #         text = source_worksheet(result_list[7])+"\n"+result_list[7][2] + result_list[7][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[7][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[8][1],
-                #         text = source_worksheet(result_list[8])+"\n"+result_list[8][2] + result_list[8][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[0][6]
-                #             ),
-                #         ]
-                #     ),
-                #     CarouselColumn(
-                #         # thumbnail_image_url='https://i.imgur.com/4QfKuz1.png',
-                #         title=result_list[9][1],
-                #         text = source_worksheet(result_list[9])+"\n"+result_list[9][2] + result_list[9][3] + ' (樓或房號)',
-                #         #text = result_list[0][3],
-                #         actions=[
-                #             MessageTemplateAction(
-                #                 label='聯絡資訊',
-                #                 text=result_list[9][6]
-                #             ),
-                #         ]
-                #     ),
-                # ]

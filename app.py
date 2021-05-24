@@ -36,7 +36,9 @@ def find_specific_room(room):
     last_row = int(next_available_row(ws_all))
     result_list = []
     for i in range(last_row-1,60,-1):
-        available = ws_all_value[i][3]
+        print("all:",ws_all_value[i][2])
+        available = ws_all_value[i][2]
+        print("available",available)
         if available == room:
             result_list += [ws_all_value[i]]
     return result_list
@@ -89,8 +91,9 @@ def handle_message(event):
     profile = line_bot_api.get_profile(user_id)
     #print("profile",profile,type(profile))
     mtext = event.message.text
-    if mtext=='@所有房間資訊!':
+    if mtext=='@所有房間資訊':
         try:
+            print("send_all")
             result_list = find_all_room()
             column = []
             list_len = len(result_list)
@@ -104,6 +107,7 @@ def handle_message(event):
                         actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
                     )
                 )
+            print("send_all")
             sendCarousel_all(event,column)
         except:
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text = "不對喔孩子"))
@@ -130,22 +134,24 @@ def manageForm(event, mtext,user_id):
         print("next_row",next_row)
         ws.insert_rows(row =1, number = 1, values =flist)
         result_list = find_specific_room(flist[4])
+
         #reply_text = search(result_list)
-        #print(reply_text)
+        print(result_list)
         list_len = len(result_list)
         column = []
         for i in range(list_len):
             column.append(
-            CarouselColumn
-            (
-                title = result_list[i][1],
-                text = source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
-                #text = result_list[0][3],
-                actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
+                CarouselColumn
+                (
+                    title = result_list[i][1],
+                    text = source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
+                    #text = result_list[0][3],
+                    actions=[MessageTemplateAction(label='聯絡資訊',text=result_list[i][6]),]
+                )
             )
-            )
+        #print("column",column)
         sendCarousel_all(event,column)
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply_text))
+        #line_bot_api.reply_message(event.reply_token,TextSendMessage(text = reply_text))
         
     except:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))

@@ -26,14 +26,58 @@
                 <option>BOT太子學舍</option>
             </select>
             <br />
-            <label>現住宿舍</label>
-            <input type="text" id="now_room_s" class="form-control" />
+            <form>
+            現在住的宿舍<br>
+            <input type="radio" value="1" name="Product_1"> 男一舍
+            <input type="radio" value="13" name="Product_5"> 女一舍
+            <input type="radio" value="10" name="Product_5"> 研一男舍<br>
+            <input type="radio" value="2" name="Product_2"> 男二舍
+            <input type="radio" value="14" name="Product_5"> 女二舍
+            <input type="radio" value="10" name="Product_5"> 研一女舍<br>
+            <input type="radio" value="3" name="Product_3"> 男三舍
+            <input type="radio" value="15" name="Product_5"> 女三舍
+            <input type="radio" value="11" name="Product_5"> 研三舍<br>
+            <input type="radio" value="4" name="Product_4"> 男四舍
+            <input type="radio" value="16" name="Product_5"> 女四舍
+            <input type="radio" value="12" name="Product_5"> 大一女舍<br>
+            <input type="radio" value="5" name="Product_5"> 男五舍
+            <input type="radio" value="17" name="Product_5"> 女五舍<br>
+            <input type="radio" value="6" name="Product_5"> 男六舍
+            <input type="radio" value="18" name="Product_5"> 女六舍<br>
+            <input type="radio" value="7" name="Product_5"> 男七舍
+            <input type="radio" value="19" name="Product_5"> 女八舍<br>
+            <input type="radio" value="8" name="Product_5"> 男八舍
+            <input type="radio" value="20" name="Product_5"> 女九舍<br>
+        
+            </form>
             <br />
             <label>現住樓層或房號（可不填）</label>
             <input type="text" id="now_room_floor" class="form-control" />
             <br />
-            <label>想換到哪一棟宿舍</label>
-            <input type="text" id="sel_room" class="form-control" />
+            <form>
+            想換到的宿舍<br>
+            <input type="checkbox" value="1" name="Product_1"> 男一舍
+            <input type="checkbox" value="13" name="Product_5"> 女一舍
+            <input type="checkbox" value="10" name="Product_5"> 研一男舍<br>
+            <input type="checkbox" value="2" name="Product_2"> 男二舍
+            <input type="checkbox" value="14" name="Product_5"> 女二舍
+            <input type="checkbox" value="10" name="Product_5"> 研一女舍<br>
+            <input type="checkbox" value="3" name="Product_3"> 男三舍
+            <input type="checkbox" value="15" name="Product_5"> 女三舍
+            <input type="checkbox" value="11" name="Product_5"> 研三舍<br>
+            <input type="checkbox" value="4" name="Product_4"> 男四舍
+            <input type="checkbox" value="16" name="Product_5"> 女四舍
+            <input type="checkbox" value="12" name="Product_5"> 大一女舍<br>
+            <input type="checkbox" value="5" name="Product_5"> 男五舍
+            <input type="checkbox" value="17" name="Product_5"> 女五舍<br>
+            <input type="checkbox" value="6" name="Product_5"> 男六舍
+            <input type="checkbox" value="18" name="Product_5"> 女六舍<br>
+            <input type="checkbox" value="7" name="Product_5"> 男七舍
+            <input type="checkbox" value="19" name="Product_5"> 女八舍<br>
+            <input type="checkbox" value="8" name="Product_5"> 男八舍
+            <input type="checkbox" value="20" name="Product_5"> 女九舍<br>
+        
+            </form>
             <br />
             <label>想換到的樓層或房號(可不填)</label>
             <input type="text" id="sel_room_type" class="form-control" />
@@ -41,16 +85,15 @@
             <label>聯絡方式(請留一種方式就好，以免個資外洩) </label>
             <input type="text" id="contact" class="form-control" />
             <br />
-            <label>特殊需求：希望換到的宿舍...（可不填）</label>
-            <select id="roommate" multiple="true">
-                <option selected disabled hidden></option>
-                <option>室友安靜</option>
-                <option>室友較早就寢（12點以前）</option>
-                <option>室友不要打呼</option>
-                <option>室友不要太淺眠</option>
-                <option>室友乾淨</option>
-            </select>
             <br />
+            <form>
+            特殊需求：希望換到的宿舍...（可不填）<br>
+            <input type="checkbox" value="1" name="Product_1"> 室友安靜<br>
+            <input type="checkbox" value="2" name="Product_2"> 室友較早就寢（12點以前）<br>
+            <input type="checkbox" value="3" name="Product_3"> 室友不要打呼<br>
+            <input type="checkbox" value="4" name="Product_4"> 室友不要太淺眠<br>
+            <input type="checkbox" value="5" name="Product_5"> 室友乾淨<br>
+            </form>
             <br />
             <button class="btn btn-success btn-block" id="sure">確定</button>
         </div>

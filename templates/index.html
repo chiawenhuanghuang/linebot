@@ -26,56 +26,63 @@
                 <option>BOT太子學舍</option>
             </select>
             <br />
-            <label>現住宿舍類別</label><br>
-            <input type="radio" id="now_room_s" value="男一舍" name="Product_1"> 男一舍
-            <input type="radio" id="now_room_s" value="女一舍" name="Product_1"> 女一舍
-            <input type="radio" id="now_room_s" value="研一男舍" name="Product_1"> 研一男舍<br>
-            <input type="radio" id="now_room_s" value="男二舍" name="Product_1"> 男二舍
-            <input type="radio" id="now_room_s" value="女二舍" name="Product_1"> 女二舍
-            <input type="radio" id="now_room_s" value="研一女舍" name="Product_1"> 研一女舍<br>
-            <input type="radio" id="now_room_s" value="男三舍" name="Product_1"> 男三舍
-            <input type="radio" id="now_room_s" value="女三舍" name="Product_1"> 女三舍
-            <input type="radio" id="now_room_s" value="研三舍" name="Product_1"> 研三舍<br>
-            <input type="radio" id="now_room_s" value="男四舍" name="Product_1"> 男四舍
-            <input type="radio" id="now_room_s" value="女四舍" name="Product_1"> 女四舍
-            <input type="radio" id="now_room_s" value="大一女舍" name="Product_1"> 大一女舍<br>
-            <input type="radio" id="now_room_s" value="男五舍" name="Product_1"> 男五舍
-            <input type="radio" id="now_room_s" value="女五舍" name="Product_1"> 女五舍<br>
-            <input type="radio" id="now_room_s" value="男六舍" name="Product_1"> 男六舍
-            <input type="radio" id="now_room_s" value="女六舍" name="Product_1"> 女六舍<br>
-            <input type="radio" id="now_room_s" value="男七舍" name="Product_1"> 男七舍
-            <input type="radio" id="now_room_s" value="女八舍" name="Product_1"> 女八舍<br>
-            <input type="radio" id="now_room_s" value="男八舍" name="Product_1"> 男八舍
-            <input type="radio" id="now_room_s" value="女九舍" name="Product_1"> 女九舍<br>
+            <label>現住宿舍</label><br>
+            <select id="now_room_s" class="form-control">
+                <option selected disabled hidden>請選擇現住宿舍</option>
+                <option>男一舍</option>
+                <option>男二舍</option>
+                <option>男三舍</option>
+                <option>男四舍</option>
+                <option>男五舍</option>
+                <option>男六舍</option>
+                <option>男七舍</option>
+                <option>男八舍</option>
+
+                <option>女一舍</option>
+                <option>女二舍</option>
+                <option>女三舍</option>
+                <option>女四舍</option>
+                <option>女五舍</option>
+                <option>女六舍</option>
+                <option>女八舍</option>
+                <option>女九舍</option>
+
+                <option>研一男舍</option>
+                <option>研一女舍</option>
+                <option>研三舍</option>
+                <option>大一女舍</option>
+            </select>
         
             <br />
             <label>現住樓層或房號（可不填）</label>
-            <input type="text" id="now_room_floor" class="form-control" />
+            <input type="text" id="now_room_floor" class="form-control"/>
             <br />
-            <form>
-            想換到的宿舍<br>
-            <input type="checkbox" id="sel_room" value="男一舍" name="Product_1"> 男一舍
-            <input type="checkbox" id="sel_room" value="女一舍" name="Product_5"> 女一舍
-            <input type="checkbox" id="sel_room" value="研一男舍" name="Product_5"> 研一男舍<br>
-            <input type="checkbox" id="sel_room" value="男二舍" name="Product_2"> 男二舍
-            <input type="checkbox" id="sel_room" value="女二舍" name="Product_5"> 女二舍
-            <input type="checkbox" id="sel_room" value="研一女舍" name="Product_5"> 研一女舍<br>
-            <input type="checkbox" id="sel_room" value="男三舍" name="Product_3"> 男三舍
-            <input type="checkbox" id="sel_room" value="女三舍" name="Product_5"> 女三舍
-            <input type="checkbox" id="sel_room" value="研三舍" name="Product_5"> 研三舍<br>
-            <input type="checkbox" id="sel_room" value="男四舍" name="Product_4"> 男四舍
-            <input type="checkbox" id="sel_room" value="女四舍" name="Product_5"> 女四舍
-            <input type="checkbox" id="sel_room" value="大一女舍" name="Product_5"> 大一女舍<br>
-            <input type="checkbox" id="sel_room" value="男五舍" name="Product_5"> 男五舍
-            <input type="checkbox" id="sel_room" value="女五舍" name="Product_5"> 女五舍<br>
-            <input type="checkbox" id="sel_room" value="男六舍" name="Product_5"> 男六舍
-            <input type="checkbox" id="sel_room" value="女六舍" name="Product_5"> 女六舍<br>
-            <input type="checkbox" id="sel_room" value="男七舍" name="Product_5"> 男七舍
-            <input type="checkbox" id="sel_room" value="女八舍" name="Product_5"> 女八舍<br>
-            <input type="checkbox" id="sel_room" value="男八舍" name="Product_5"> 男八舍
-            <input type="checkbox" id="sel_room" value="女九舍" name="Product_5"> 女九舍<br>
-        
-            </form>
+            <label>想換到的宿舍</label>
+            <select id="sel_room" class="form-control" multiple="true">
+                <option selected disabled hidden>請選擇換宿類別</option>
+                <option>男一舍</option>
+                <option>男二舍</option>
+                <option>男三舍</option>
+                <option>男四舍</option>
+                <option>男五舍</option>
+                <option>男六舍</option>
+                <option>男七舍</option>
+                <option>男八舍</option>
+
+                <option>女一舍</option>
+                <option>女二舍</option>
+                <option>女三舍</option>
+                <option>女四舍</option>
+                <option>女五舍</option>
+                <option>女六舍</option>
+                <option>女八舍</option>
+                <option>女九舍</option>
+
+                <option>研一男舍</option>
+                <option>研一女舍</option>
+                <option>研三舍</option>
+                <option>大一女舍</option>
+            </select>
             <br />
             <label>想換到的樓層或房號(可不填)</label>
             <input type="text" id="sel_room_type" class="form-control" />
@@ -84,18 +91,29 @@
             <input type="text" id="contact" class="form-control" />
             <br />
             <br />
-            <form>
-            特殊需求：希望換到的宿舍...（可不填）<br>
-            <input type="checkbox" id="roommate" value="1" name="Product_1"> 室友安靜<br>
-            <input type="checkbox" id="roommate" value="2" name="Product_2"> 室友較早就寢（12點以前）<br>
-            <input type="checkbox" id="roommate" value="3" name="Product_3"> 室友不要打呼<br>
-            <input type="checkbox" id="roommate" name="Product_4"> 室友不要太淺眠<br>
-            <input type="checkbox" id="roommate" name="Product_5"> 室友乾淨<br>
-            </form>
+
+            <label>特殊需求：希望換到的宿舍...（可不填）</label>
+            <select id="roommate" multiple="true">
+                <option selected disabled hidden></option>
+                <option>室友安靜</option>
+                <option>室友較早就寢（12點以前）</option>
+                <option>室友不要打呼</option>
+                <option>室友不要太淺眠</option>
+                <option>室友乾淨</option>
+            </select>
+            <br />
             <br />
             <button class="btn btn-success btn-block" id="sure">確定</button>
         </div>
     </div>
+    <script language="Javascript">
+        document.getElementById('sel_room').onclick = function() {  
+        var markedCheckbox = document.querySelectorAll('input[type="checkbox"]:checked');  
+        for (var checkbox of markedCheckbox) {  
+            var psel_room = checkbox.value;
+            }  
+        }  
+    </script>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 	<script>

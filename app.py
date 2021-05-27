@@ -10,6 +10,10 @@ import pygsheets
 import pandas as pd
 import random
 import os
+import time
+import datetime # 引入datetime
+nowTime = datetime.datetime.now() # 取得現在時間
+# print(nowTime)
 
 app = Flask(__name__)
 gc = pygsheets.authorize(service_file='seraphic-rune-257010-c3d8f5a73a95.json')
@@ -35,20 +39,20 @@ def find_all_room():
     last_row = int(next_available_row(ws_all))
     result_list = []
     test = []
-    print("find_all_room_last_row:",last_row)
-    print("len(ws_all_value)",len(ws_all_value))
-    for i in range(last_row-1,last_row-11,-1):
+    # print("find_all_room_last_row:",last_row)
+    # print("len(ws_all_value)",len(ws_all_value))
+    for i in range(len(ws_all_value)-1,len(ws_all_value)-11,-1):
         #result_list += [ws_all.get_row(i)]
-        print("i:",i)
+        # print("i:",i)
         result_list += [ws_all_value[i-1]]
-        print("result:",result_list,"\n")
+        # print("result:",result_list,"\n")
         #print("test:",test,"\n")
     return result_list
 
 def find_specific_room(room):
-    last_row = int(next_available_row(ws_all))
+    last_row = len(ws_all_value)
     result_list = []
-    print("find_specific_room_last_row:",last_row)
+    # print("find_specific_room_last_row:",last_row)
     for i in range(last_row-1,0,-1):
         available = ws_all_value[i-1][2]
         if available == room:
@@ -60,9 +64,11 @@ def find_specific_room(room):
 def make_column(result_list):
     column = []
     list_len = len(result_list)
-    print("list_len",list_len)
+    # print("list_len",list_len)
+    
     for i in range(list_len):
-        print(i," ",result_list[i][1]," ",source_worksheet(result_list[i])," ",result_list[i][2]," ",result_list[i][3]," ",result_list[i][6])
+        # print("result list:",result_list[i],"\n")
+        # print(i," ",result_list[i][1]," ",source_worksheet(result_list[i])," ",result_list[i][2]," ",result_list[i][3]," ",result_list[i][6])
         column.append(
             CarouselColumn(
                 title=result_list[i][1],
@@ -76,6 +82,32 @@ def make_column(result_list):
             ))
     return column
 
+def push_new_massage(new_dorm,flist):
+    #last_row = int(next_available_row(ws_all))
+    #print("last_row",last_row-1)
+    # print("flist",flist)
+    last_row = len(ws_all_value)
+    userID_list = []
+    for i in range(last_row-1,0,-1):
+        wanted = ws_all_value[i-1][4]
+        if wanted == new_dorm:
+            userID_list += [ws_all_value[i-1][8]]
+            # if(len(result_list)==10):
+            #     break
+    #userID_list
+    column = make_column([flist])
+    message = TemplateSendMessage(
+            alt_text='轉盤樣板',
+            template=CarouselTemplate(
+                columns=column
+            )
+        )
+    # print("len(column)",len(column),column)
+    # print("userID_list:",userID_list)
+    to_userID = list(set(userID_list))
+    # print("to_userID",to_userID)
+    for i in range(len(to_userID)):
+        line_bot_api.push_message(to_userID[i],message)
 def manageForm(event, mtext,user_id):
     try:
         flist = mtext[3:].split('/')
@@ -87,18 +119,26 @@ def manageForm(event, mtext,user_id):
         text1 += '想換到的樓層或房號：' + flist[5] + '\n'
         text1 += '聯絡方式：' + flist[6] + '\n'
         text1 += '特殊需求：' + flist[7]
-        
+
+        nowTime = int(time.time()) # 取得現在時間
+        struct_time = time.localtime(nowTime) # 轉換成時間元組
+        timeString = time.strftime("%Y-%m-%d %H:%M:%S", struct_time)
+        #flist.insert(0,timeString)
         flist.append(user_id)
         flist.append("linebot登記")
         
-        next_row = next_available_row(ws)
-        ws.insert_rows(row =1, number = 1, values =flist)
+        next_row = int(next_available_row(ws))-1
+        ws.insert_rows(row = next_row, number = 1, values =flist)
         result_list = find_specific_room(flist[4])
         column = make_column(result_list)
         if len(column) > 0:
             sendCarousel(event,column)
         else:
             line_bot_api.reply_message(event.reply_token,TextSendMessage(text='尚無匹配房間'))
+        # print("flist:",flist," ",len(flist))
+        # print("-----------------push-------------------")
+        push_new_massage(flist[2],flist)
+
         
     except:
         line_bot_api.reply_message(event.reply_token,TextSendMessage(text='發生錯誤！'))

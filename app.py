@@ -39,26 +39,38 @@ def find_all_room():
     last_row = int(next_available_row(ws_all))
     result_list = []
     test = []
-    # print("find_all_room_last_row:",last_row)
-    # print("len(ws_all_value)",len(ws_all_value))
+    
     for i in range(len(ws_all_value)-1,len(ws_all_value)-11,-1):
-        #result_list += [ws_all.get_row(i)]
-        # print("i:",i)
         result_list += [ws_all_value[i-1]]
-        # print("result:",result_list,"\n")
-        #print("test:",test,"\n")
     return result_list
 
-def find_specific_room(room):
+def find_specific_room(room,roommate_d):
     last_row = len(ws_all_value)
     result_list = []
-    # print("find_specific_room_last_row:",last_row)
+    print("room:",room)
+    room_list = room.split(',')
+    roommate_d_list = roommate_d.split(',')
+
+    #符合室友特殊需求
     for i in range(last_row-1,0,-1):
         available = ws_all_value[i-1][2]
-        if available == room:
-            result_list += [ws_all_value[i-1]]
-            if(len(result_list)==10):
-                break
+        roommate_s = ws_all_value[i-1][7]
+        for j in range(len(room_list)):
+            for k in range(len(roommate_d_list)):
+                if available == room_list[j] and roommate_d_list[k]==roommate_s:
+                    result_list += [ws_all_value[i-1]]
+                    if(len(result_list)==10):
+                        return result_list
+
+    #未符合室友特殊需求，但宿舍符合
+    for i in range(last_row-1,0,-1):
+        available = ws_all_value[i-1][2]
+        for j in range(len(room_list)):
+            if available == room_list[j]:
+                result_list += [ws_all_value[i-1]]
+                if(len(result_list)==10):
+                    return result_list
+                    
     return result_list
 
 def make_column(result_list):
@@ -69,10 +81,14 @@ def make_column(result_list):
     for i in range(list_len):
         # print("result list:",result_list[i],"\n")
         # print(i," ",result_list[i][1]," ",source_worksheet(result_list[i])," ",result_list[i][2]," ",result_list[i][3]," ",result_list[i][6])
+        if (result_list[i][3] == ""):
+            result_list[i][3] = ' 未填寫'
+        if (result_list[i][7] == ""):
+            result_list[i][7] = '未填寫'
         column.append(
             CarouselColumn(
                 title=result_list[i][1],
-                text=source_worksheet(result_list[i])+"\n"+result_list[i][2] + result_list[i][3] + ' (樓或房號)',
+                text=source_worksheet(result_list[i])+"\n"+result_list[i][2] +" "+ result_list[i][3] + ' (樓或房號)\n室友：'+ result_list[i][7],
                 actions=[
                     MessageTemplateAction(
                         label='聯絡資訊',
@@ -87,13 +103,20 @@ def push_new_massage(new_dorm,flist):
     #print("last_row",last_row-1)
     # print("flist",flist)
     last_row = len(ws_all_value)
+
     userID_list = []
     for i in range(last_row-1,0,-1):
         wanted = ws_all_value[i-1][4]
-        if wanted == new_dorm:
-            userID_list += [ws_all_value[i-1][8]]
-            # if(len(result_list)==10):
-            #     break
+        wanted_list = wanted.split(',')
+        print("wanted_list",wanted_list)
+        for j in range(len(wanted_list)):
+            print("ws_all_value[i-1][8]:",ws_all_value[i-1][8],"\n")
+            print('match:',wanted_list[j]," ",new_dorm)
+            if wanted_list[j] == new_dorm and ws_all_value[i-1][8] != "":
+                print("inininin")
+                userID_list += [ws_all_value[i-1][8]]
+                # if(len(result_list)==10):
+                #     break
     #userID_list
     column = make_column([flist])
     message = TemplateSendMessage(
@@ -102,8 +125,7 @@ def push_new_massage(new_dorm,flist):
                 columns=column
             )
         )
-    # print("len(column)",len(column),column)
-    # print("userID_list:",userID_list)
+    
     to_userID = list(set(userID_list))
     # print("to_userID",to_userID)
     for i in range(len(to_userID)):
@@ -111,25 +133,25 @@ def push_new_massage(new_dorm,flist):
 def manageForm(event, mtext,user_id):
     try:
         flist = mtext[3:].split('/')
-        text1 = '換宿類別：' + flist[0] + '\n'
-        text1 += '現住宿舍類別：' + flist[1] + '\n'
-        text1 += '現住宿舍：' + flist[2] + '\n'
-        text1 += '現住樓層或房號：' + flist[3] + '\n'
-        text1 += '想換到哪一棟宿舍：' + flist[4] + '\n'
-        text1 += '想換到的樓層或房號：' + flist[5] + '\n'
-        text1 += '聯絡方式：' + flist[6] + '\n'
-        text1 += '特殊需求：' + flist[7]
+        text1 = '輸入資訊'
+        text1 += '現住宿舍類別：' + flist[0] + '\n'
+        text1 += '現住宿舍：' + flist[1] + '\n'
+        text1 += '現住樓層或房號：' + flist[2] + '\n'
+        text1 += '想換到哪一棟宿舍：' + flist[3] + '\n'
+        text1 += '室友或房間需求：' + flist[4] + '\n'
+        text1 += '聯絡方式：' + flist[5] + '\n'
+        text1 += '現任室友：' + flist[6]
 
         nowTime = int(time.time()) # 取得現在時間
         struct_time = time.localtime(nowTime) # 轉換成時間元組
         timeString = time.strftime("%Y-%m-%d %H:%M:%S", struct_time)
-        #flist.insert(0,timeString)
+        flist.insert(0,timeString)
         flist.append(user_id)
         flist.append("linebot登記")
         
         next_row = int(next_available_row(ws))-1
         ws.insert_rows(row = next_row, number = 1, values =flist)
-        result_list = find_specific_room(flist[4])
+        result_list = find_specific_room(flist[4],flist[5])
         column = make_column(result_list)
         if len(column) > 0:
             sendCarousel(event,column)

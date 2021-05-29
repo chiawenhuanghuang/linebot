@@ -10,13 +10,6 @@
 <body>
     <div class="row" style="margin: 10px">
         <div class="col-12" style="margin: 10px">
-            <label>換宿類別</label>
-            <select id="sel_room_type" class="form-control">
-                <option selected disabled hidden>請選擇換宿類別</option>
-                <option>校內學士班宿舍</option>
-                <option>校內研究生宿舍</option>
-                <option>BOT太子學舍</option>
-            </select>
             <br />
             <label>現住宿舍類別</label>
             <select id="now_room" class="form-control">
@@ -57,6 +50,17 @@
             <label>現住樓層或房號（可不填）</label>
             <input type="text" id="now_room_floor" class="form-control"/>
             <br />
+            <label>現住宿舍室友...（可不填，供換房人參考）</label>
+            <select id="roommate_s" multiple="true">
+                <option selected disabled hidden></option>
+                <option>室友安靜</option>
+                <option>室友較早就寢（12點以前）</option>
+                <option>室友不打呼</option>
+                <option>室友不太淺眠</option>
+                <option>室友乾淨</option>
+            </select>
+            <br />
+            <br />
             <label>想換到的宿舍</label>
             <select id="sel_room" class="form-control" multiple="true">
                 <option selected disabled hidden>請選擇換宿類別</option>
@@ -84,16 +88,13 @@
                 <option>大一女舍</option>
             </select>
             <br />
-            <label>想換到的樓層或房號(可不填)</label>
-            <input type="text" id="sel_room_type" class="form-control" />
-            <br />
             <label>聯絡方式(請留一種方式就好，以免個資外洩) </label>
             <input type="text" id="contact" class="form-control" />
             <br />
             <br />
 
             <label>特殊需求：希望換到的宿舍...（可不填）</label>
-            <select id="roommate" multiple="true">
+            <select id="roommate_d" multiple="true">
                 <option selected disabled hidden></option>
                 <option>室友安靜</option>
                 <option>室友較早就寢（12點以前）</option>
@@ -106,14 +107,6 @@
             <button class="btn btn-success btn-block" id="sure">確定</button>
         </div>
     </div>
-    <script language="Javascript">
-        document.getElementById('sel_room').onclick = function() {  
-        var markedCheckbox = document.querySelectorAll('input[type="checkbox"]:checked');  
-        for (var checkbox of markedCheckbox) {  
-            var psel_room = checkbox.value;
-            }  
-        }  
-    </script>
 
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 	<script>
@@ -121,20 +114,19 @@
             liff.init({liffId: myLiffId });
         }
 
-		function pushMsg(psel_room_type, pnow_room, pnow_room_s, pnow_room_floor, psel_room, psel_room_type, pcontact, proommate) {
-			if (psel_room_type == '' || pnow_room == '' || pnow_room_s == ''|| psel_room == ''|| pcontact == '') {  //資料檢查
+		function pushMsg(pnow_room, pnow_room_s, pnow_room_floor, psel_room,proommate_d, pcontact, proommate_s) {
+			if (pnow_room == '' || pnow_room_s == ''|| psel_room == ''|| pcontact == '') {  //資料檢查
 				alert('尚有必填資料未填寫！');
 			 	return;
 			}
 			var msg = "###";  //回傳訊息字串
-			msg = msg + psel_room_type + "/";
 			msg = msg + pnow_room + "/";
             msg = msg + pnow_room_s+ "/";
 			msg = msg + pnow_room_floor + "/";
             msg = msg + psel_room + "/";
-            msg = msg + psel_room_type + "/";
+            msg = msg + proommate_d + "/";
             msg = msg + pcontact + "/";
-            msg = msg + proommate;
+            msg = msg + proommate_s;
 
 			liff.sendMessages([  //推播訊息
 				{ type: 'text',
@@ -149,7 +141,7 @@
 		$(document).ready(function () {
 			initializeLiff('{{ liffid }}');  //接收傳遞的 liffid 參數
 			$('#sure').click(function (e) {  //按下確定鈕
-				pushMsg($('#sel_room_type').val(), $('#now_room').val(), $('#now_room_s').val(), $('#now_room_floor').val(), $('#sel_room').val(), $('#sel_room_type').val(), $('#contact').val(), $('#roommate').val());
+				pushMsg($('#now_room').val(), $('#now_room_s').val(), $('#now_room_floor').val(), $('#sel_room').val(), $('#roommate_d').val(), $('#contact').val(), $('#roommate_s').val());
 			});
 		});
 	</script>

@@ -16,7 +16,7 @@ nowTime = datetime.datetime.now() # 取得現在時間
 # print(nowTime)
 
 app = Flask(__name__)
-gc = pygsheets.authorize(service_file='/Users/user1/Desktop/course/SAD/linebot-main/seraphic-rune-257010-c3d8f5a73a95.json')
+gc = pygsheets.authorize(service_file='seraphic-rune-257010-c3d8f5a73a95.json')
 sh = gc.open_by_url('https://docs.google.com/spreadsheets/d/1HmEeZN0o1lvcKNs6XSPShfNQ08qQp4TOG_DVeqE5Bsc/edit?usp=sharing')
 line_bot_api = LineBotApi('TsDrCrgc+tPMls7GnC4vueh2MN0MZlSwoL4fOtFv7tgZDH8YUOaonZstYlg9sYLjFYJkP5GOYBEwrVQQI6bnsHg/izFJzwAzIjAihGXsYivd7bzuRyy/54zVlKA0M2ahmUSRWIL+1G0ruV16wRKnagdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('2dee7e70d5e80b89ea5bcc8befb82405')

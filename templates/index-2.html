@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>換房表單</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="row" style="margin: 10px">
+        <div class="col-12" style="margin: 10px">
+            
+            <br />
+            <label>想換到的宿舍</label>
+            <select id="sel_room" class="form-control" multiple="true">
+                <option selected disabled hidden>請選擇換宿類別</option>
+                <option>男一舍</option>
+                <option>男二舍</option>
+                <option>男三舍</option>
+                <option>男四舍</option>
+                <option>男五舍</option>
+                <option>男六舍</option>
+                <option>男七舍</option>
+                <option>男八舍</option>
+
+                <option>女一舍</option>
+                <option>女二舍</option>
+                <option>女三舍</option>
+                <option>女四舍</option>
+                <option>女五舍</option>
+                <option>女六舍</option>
+                <option>女八舍</option>
+                <option>女九舍</option>
+
+                <option>研一男舍</option>
+                <option>研一女舍</option>
+                <option>研三舍</option>
+                <option>大一女舍</option>
+
+                <option>長興宿舍Ａ棟</option>
+                <option>長興宿舍Ｂ棟</option>
+                <option>水源宿舍Ａ棟</option>
+                <option>水源宿舍Ｂ棟</option>
+                <option>水源宿舍Ｃ棟</option>
+            </select>
+            <br />
+            <br />
+
+            <label>特殊需求：希望換到的宿舍...（可不填）</label>
+            <select id="roommate_d" multiple="true">
+                <option selected disabled hidden></option>
+                <option>室友安靜</option>
+                <option>室友較早就寢（12點以前）</option>
+                <option>室友不要打呼</option>
+                <option>室友不要太淺眠</option>
+                <option>室友乾淨</option>
+            </select>
+            <br />
+            <br />
+            <button class="btn btn-success btn-block" id="sure">確定</button>
+        </div>
+    </div>
+
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+	<script>
+        function initializeLiff(myLiffId) {
+            liff.init({liffId: myLiffId });
+        }
+
+		function pushMsg(psel_room,proommate_d) {
+			if (psel_room == '') {  //資料檢查
+				alert('尚有必填資料未填寫！');
+			 	return;
+			}
+			var msg = "@@@";  //回傳訊息字串
+			
+            msg = msg + psel_room + "/";
+            msg = msg + proommate_d ;
+            
+
+			liff.sendMessages([  //推播訊息
+				{ type: 'text',
+				  text: msg
+				}
+			])
+				.then(() => {
+					liff.closeWindow();  //關閉視窗
+				});
+		}
+
+		$(document).ready(function () {
+			initializeLiff('{{ liffid }}');  //接收傳遞的 liffid 參數
+			$('#sure').click(function (e) {  //按下確定鈕
+				pushMsg($('#sel_room').val(), $('#roommate_d').val());
+			});
+		});
+	</script>
+</body>
+</html>
